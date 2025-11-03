@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { FileText } from "lucide-react";
+import {loginUser} from '../api/paperiqApi';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,21 +14,23 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate authentication
-    setTimeout(() => {
-      if (email && password) {
-        localStorage.setItem("isAuthenticated", "true");
-        toast.success("Login successful!");
-        navigate("/dashboard");
-      } else {
-        toast.error("Please enter valid credentials");
-      }
+    try {
+      const user = await loginUser(email, password);
+      debugger;
+      toast.success(`Welcome back, ${user.name}!`);
       setIsLoading(false);
-    }, 1000);
+      navigate("/dashboard");
+    } catch (error) {
+      if (error.response?.data?.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Login failed. Please try again.");
+      }
+    }
   };
 
   return (

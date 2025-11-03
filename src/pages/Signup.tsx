@@ -3,12 +3,21 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "sonner";
 import { FileText } from "lucide-react";
+import { registerUser } from "../api/paperiqApi"; // ✅ Import API function
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,25 +25,24 @@ const Signup = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       toast.error("Passwords don't match");
       return;
     }
 
     setIsLoading(true);
-
-    // Simulate registration
-    setTimeout(() => {
-      if (email && password) {
-        localStorage.setItem("isAuthenticated", "true");
-        toast.success("Account created successfully!");
-        navigate("/dashboard");
-      } else {
-        toast.error("Please fill in all fields");
-      }
+    try {
+      await registerUser(name, email, password);
+      toast.success("Account created successfully!");
+      navigate("/login");
+    } catch (error: any) {
+      const errorMsg =
+        error.response?.data?.error || "Failed to register. Try again.";
+      toast.error(errorMsg);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -47,10 +55,23 @@ const Signup = () => {
             </div>
           </div>
           <CardTitle className="text-3xl font-bold">Create Account</CardTitle>
-          <CardDescription>Sign up to get started with PaperIQ</CardDescription>
+          <CardDescription>
+            Sign up to get started with PaperIQ
+          </CardDescription>
         </CardHeader>
         <form onSubmit={handleSignup}>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
