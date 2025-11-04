@@ -40,6 +40,7 @@ class Entity(Document):
     entity_type = StringField(max_length=100)
     description = StringField()
     doc = ReferenceField(DocumentData, reverse_delete_rule=CASCADE)
+    user = ReferenceField(User, reverse_delete_rule=CASCADE)  # ✅ new
 
     meta = {'collection': 'entities'}
 
@@ -51,6 +52,7 @@ class Relationship(Document):
     target_entity = ReferenceField(Entity, reverse_delete_rule=CASCADE)
     relation_type = StringField(max_length=100)
     doc = ReferenceField(DocumentData, reverse_delete_rule=CASCADE)
+    user = ReferenceField(User, reverse_delete_rule=CASCADE)  # ✅ new
 
     meta = {'collection': 'relationships'}
 

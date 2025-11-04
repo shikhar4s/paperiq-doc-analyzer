@@ -20,7 +20,6 @@ const Login = () => {
 
     try {
       const user = await loginUser(email, password);
-      debugger;
       toast.success(`Welcome back, ${user.name}!`);
       setIsLoading(false);
       navigate("/dashboard");
