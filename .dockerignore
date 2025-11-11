@@ -1,0 +1,10 @@
+node_modules/
+build/
+dist/
+.git
+.gitignore
+.dockerignore
+*.log
+npm-debug.log*
+.vscode
+paperiq_backend/
